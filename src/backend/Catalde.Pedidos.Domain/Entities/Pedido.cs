@@ -11,9 +11,9 @@ public class Pedido
     public bool IndEntregue { get; private set; }
     public List<Ocorrencia> Ocorrencias { get; private set; }
 
-    public Pedido(int numeroPedido)
+    public Pedido(NumeroPedido numeroPedido)
     {
-       NumeroPedido = NumeroPedido ?? throw new ArgumentException(nameof(numeroPedido)); 
+       NumeroPedido = numeroPedido ?? throw new ArgumentNullException(nameof(numeroPedido)); 
        HorarioPedido = DateTime.UtcNow;
        IndEntregue = false;
        Ocorrencias = new List<Ocorrencia>();

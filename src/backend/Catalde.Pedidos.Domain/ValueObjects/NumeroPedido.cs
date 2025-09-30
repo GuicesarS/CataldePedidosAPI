@@ -6,7 +6,7 @@ public class NumeroPedido
     protected NumeroPedido() { }
     public NumeroPedido(int value)
     {
-        if(value < 0)
+        if(value <= 0)
             throw new ArgumentException("Número do pedido deve ser maior que zero.");
 
         Value = value;
