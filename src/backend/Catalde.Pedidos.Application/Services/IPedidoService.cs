@@ -8,4 +8,6 @@ public interface IPedidoService
     Pedido CriarPedido(CriarPedidoDTO criarPedido);
     void AdicionarOcorrencia(Pedido pedido, AdicionarOcorrenciaDTO ocorrencia);
     PedidoDTO MapearParaDTO(Pedido pedido);
+    Task<List<PedidoDTO>> GetAllPedidosAsync();
+    Task<PedidoDTO?> GetPedidoByIdAsync(int id);
 }
