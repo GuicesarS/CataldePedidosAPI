@@ -1,0 +1,35 @@
+# Build Folders
+bin/
+obj/
+publish/
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Rider/IDE
+.idea/
+*.ncrunch*
+
+# VSCode
+.vscode/
+
+# Test
+TestResults/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# NuGet
+*.nupkg
+.nuget/packages/
+
+# Secrets / local settings
+appsettings.Development.json
+appsettings.*.local.json
+secrets.json
+.env
