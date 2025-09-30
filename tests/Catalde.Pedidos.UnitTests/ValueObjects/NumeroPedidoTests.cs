@@ -1,9 +1,9 @@
 ﻿using Catalde.Pedidos.Domain.ValueObjects;
 using FluentAssertions;
 
-namespace Catalde.Pedidos.UnitTests;
+namespace Catalde.Pedidos.UnitTests.ValueObjects;
 
-public class NumeroPedidoTest
+public class NumeroPedidoTests
 {
     [Fact]
     public void Criar_NumeroPedido_Valido()

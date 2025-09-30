@@ -24,4 +24,9 @@
     <ProjectReference Include="..\..\src\backend\Catalde.Pedidos.Application\Catalde.Pedidos.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Entities\" />
+    <Folder Include="Validations\" />
+  </ItemGroup>
+
 </Project>
