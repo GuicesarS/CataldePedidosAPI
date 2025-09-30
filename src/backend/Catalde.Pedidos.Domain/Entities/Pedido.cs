@@ -11,6 +11,7 @@ public class Pedido
     public bool IndEntregue { get; private set; }
     public List<Ocorrencia> Ocorrencias { get; private set; }
 
+    protected Pedido() { }
     public Pedido(NumeroPedido numeroPedido)
     {
        NumeroPedido = numeroPedido ?? throw new ArgumentNullException(nameof(numeroPedido)); 

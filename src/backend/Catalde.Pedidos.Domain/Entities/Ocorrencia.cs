@@ -9,6 +9,7 @@ public class Ocorrencia
     public DateTime HoraOcorrencia { get; private set; }
     public bool IndFinalizadora { get; private set; }
 
+    protected Ocorrencia() { }
     public Ocorrencia(ETipoOcorrencia tipoOcorrencia, bool indFinalizadora)
     {
         TipoOcorrencia = tipoOcorrencia;
