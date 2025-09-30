@@ -1,7 +1,7 @@
 ﻿using Catalde.Pedidos.Domain.ValueObjects;
 using FluentAssertions;
 
-namespace Catalde.Pedidos.UnitTests.ValueObjects;
+namespace Catalde.Pedidos.UnitTests.Domain.ValueObjects;
 
 public class NumeroPedidoTests
 {
