@@ -1,18 +1,19 @@
 ﻿using Catalde.Pedidos.Domain.Enums;
+using Catalde.Pedidos.Domain.ValueObjects;
 
 namespace Catalde.Pedidos.Domain.Entities;
 
 public class Pedido
 {
     public int IdPedido { get; private set; }
-    public int NumeroPedido { get; private set; }
+    public NumeroPedido NumeroPedido { get; private set; }
     public DateTime HorarioPedido { get; private set; }
     public bool IndEntregue { get; private set; }
     public List<Ocorrencia> Ocorrencias { get; private set; }
 
     public Pedido(int numeroPedido)
     {
-       NumeroPedido = numeroPedido;
+       NumeroPedido = NumeroPedido ?? throw new ArgumentException(nameof(numeroPedido)); 
        HorarioPedido = DateTime.UtcNow;
        IndEntregue = false;
        Ocorrencias = new List<Ocorrencia>();
