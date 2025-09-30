@@ -10,7 +10,7 @@ namespace Catalde.Pedidos.Application.DTOs
         public bool IndEntregue { get; private set; }
         public List<OcorrenciaDTO> Ocorrencias { get; private set; } = new();
 
-        public PedidoDTO FromEntity(Pedido pedido)
+        public static PedidoDTO FromEntity(Pedido pedido)
         {
             return new PedidoDTO
             {
