@@ -63,7 +63,7 @@ public class PedidosController : ControllerBase
     [HttpPost("{id}/ocorrencia")]
     [ProducesResponseType(typeof(PedidoDTO), StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> AdicionarOcorencia(int id, [FromBody] AdicionarOcorrenciaDTO dto)
+    public async Task<ActionResult> AdicionarOcorrencia(int id, [FromBody] AdicionarOcorrenciaDTO dto)
     {
         var pedido = await _repository.GetByIdAsync(id);
 

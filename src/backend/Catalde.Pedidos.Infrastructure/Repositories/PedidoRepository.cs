@@ -25,11 +25,16 @@ public class PedidoRepository : IPedidoRepository
         return pedidos;
     }
 
-    public async Task CreateAsync(Pedido pedido) => await _dbContext.Pedidos.AddAsync(pedido);
-    public Task UpdateAsync(Pedido pedido)
+    public async Task CreateAsync(Pedido pedido)
+    {
+        await _dbContext.Pedidos.AddAsync(pedido);
+        await _dbContext.SaveChangesAsync();
+    }
+    
+    public async Task UpdateAsync(Pedido pedido)
     {
        _dbContext.Pedidos.Update(pedido);
-        return Task.CompletedTask;
+        await _dbContext.SaveChangesAsync();
     }
      public Task DeleteAsync(Pedido pedido)
     {
