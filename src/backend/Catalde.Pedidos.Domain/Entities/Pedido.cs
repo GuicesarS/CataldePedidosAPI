@@ -29,6 +29,9 @@ public class Pedido
             throw new InvalidOperationException("Não é possível registrar a mesma ocorrência em menos de 10 minutos.");
         }
 
+        if(IndEntregue)
+            throw new InvalidOperationException("Não é possível adicionar ocorrências a um pedido finalizado.");
+
         Ocorrencias.Add(ocorrencia);
 
         if(Ocorrencias.Count == 2)
