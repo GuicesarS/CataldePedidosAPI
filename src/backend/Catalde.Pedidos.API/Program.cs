@@ -1,3 +1,4 @@
+using Catalde.Pedidos.Api.Midldleware;
 using Catalde.Pedidos.Application.Services;
 using Catalde.Pedidos.Infrastructure.Context;
 using Catalde.Pedidos.Infrastructure.Repositories;
@@ -16,6 +17,8 @@ builder.Services.AddDbContext<PedidoDbContext>(options =>
 
 
 var app = builder.Build();
+
+app.UseMiddleware<ErrorHandlingMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
