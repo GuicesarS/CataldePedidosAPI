@@ -1,6 +1,7 @@
 ﻿using Catalde.Pedidos.Application.DTOs;
 using Catalde.Pedidos.Application.Services;
 using Catalde.Pedidos.Infrastructure.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Catalde.Pedidos.Api.Controllers;
@@ -18,6 +19,7 @@ public class PedidosController : ControllerBase
         _pedidoService = pedidoService;
     }
 
+    [AllowAnonymous]
     [HttpGet]
     [ProducesResponseType(typeof(List<PedidoDTO>), StatusCodes.Status200OK)]
     public async Task<ActionResult<List<PedidoDTO>>> GetAll()
@@ -29,6 +31,7 @@ public class PedidosController : ControllerBase
         return Ok (pedidosDTO);
     }
 
+    [Authorize]
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(PedidoDTO), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -42,6 +45,7 @@ public class PedidosController : ControllerBase
         return Ok(_pedidoService.MapearParaDTO(pedido));
     }
 
+    [Authorize]
     [HttpPost]
     [ProducesResponseType(typeof(PedidoDTO), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -55,6 +59,7 @@ public class PedidosController : ControllerBase
 
     }
 
+    [Authorize]
     [HttpPost("{id}/ocorrencia")]
     [ProducesResponseType(typeof(PedidoDTO), StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -71,6 +76,7 @@ public class PedidosController : ControllerBase
         return NoContent();
     }
 
+    [Authorize]
     [HttpDelete("{id}/ocorrencia/{ocorrenciaId}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
