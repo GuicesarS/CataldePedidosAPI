@@ -1,0 +1,1 @@
+2025-10-01 13:43:43.068 -03:00 [INF] ?? Aplicação iniciada com sucesso!
