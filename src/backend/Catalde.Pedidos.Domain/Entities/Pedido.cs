@@ -43,8 +43,15 @@ public class Pedido
 
     public void ExcluirOcorrencia (Ocorrencia ocorrencia)
     {
+        if (ocorrencia is null)
+            throw new ArgumentNullException(nameof(ocorrencia));
+
         if (IndEntregue)
             throw new InvalidOperationException("Não é possível excluir ocorrência de pedido concluído.");
+
+        if (!Ocorrencias.Contains(ocorrencia))
+            throw new InvalidOperationException("Ocorrência não encontrada no pedido.");
+
 
         Ocorrencias.Remove(ocorrencia);
     }

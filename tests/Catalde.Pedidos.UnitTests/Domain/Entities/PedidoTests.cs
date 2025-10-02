@@ -73,22 +73,6 @@ public class PedidoTests
 
     }
 
-    [Fact]
-    public void Excluir_Ocorrencia_PedidoFinalizado()
-    {
-        var pedido = new Pedido(new NumeroPedido(10));
-
-        var ocorrencia1 = new Ocorrencia(ETipoOcorrencia.EmRotaDeEntrega, false);
-        var ocorrencia2 = new Ocorrencia(ETipoOcorrencia.EntregueComSucesso, false);
-
-        pedido.AdicionarOcorrencia(ocorrencia1);
-        pedido.AdicionarOcorrencia(ocorrencia2);
-
-        Action act = () => pedido.ExcluirOcorrencia(ocorrencia1);
-
-        act.Should().Throw<InvalidOperationException>()
-            .WithMessage("Não é possível excluir ocorrência de pedido concluído.");
-    }
 
     [Fact]
     public void Adicionar_Ocorrencia_PedidoFinalizado()
@@ -109,4 +93,46 @@ public class PedidoTests
         .WithMessage("Não é possível adicionar ocorrências a um pedido finalizado.");
 
     }
+
+    [Fact]
+    public void Excluir_Ocorrencia_PedidoFinalizado()
+    {
+        var pedido = new Pedido(new NumeroPedido(10));
+
+        var ocorrencia1 = new Ocorrencia(ETipoOcorrencia.EmRotaDeEntrega, false);
+        var ocorrencia2 = new Ocorrencia(ETipoOcorrencia.EntregueComSucesso, false);
+
+        pedido.AdicionarOcorrencia(ocorrencia1);
+        pedido.AdicionarOcorrencia(ocorrencia2);
+
+        Action act = () => pedido.ExcluirOcorrencia(ocorrencia1);
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("Não é possível excluir ocorrência de pedido concluído.");
+    }
+
+    [Fact]
+    public void Excluir_Ocorrencia_Nula_DeveFalhar()
+    {
+        var pedido = new Pedido(new NumeroPedido(20));
+
+        Action act = () => pedido.ExcluirOcorrencia(null!);
+
+        act.Should().Throw<ArgumentNullException>()
+            .WithParameterName("ocorrencia");
+    }
+
+    [Fact]
+    public void Excluir_Ocorrencia_NaoEncontrada_DeveFalhar()
+    {
+        var pedido = new Pedido(new NumeroPedido(21));
+        var ocorrencia = new Ocorrencia(ETipoOcorrencia.AvariaNoProduto, false);
+
+        Action act = () => pedido.ExcluirOcorrencia(ocorrencia);
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("Ocorrência não encontrada no pedido.");
+    }
+
+
 }

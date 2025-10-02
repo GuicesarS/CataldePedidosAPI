@@ -5,8 +5,9 @@ namespace Catalde.Pedidos.Application.Services;
 
 public interface IPedidoService
 {
-    Pedido CriarPedido(CriarPedidoDTO criarPedido);
-    void AdicionarOcorrencia(Pedido pedido, AdicionarOcorrenciaDTO ocorrencia);
+    Task<Pedido> CriarPedidoAsync(CriarPedidoDTO criarPedido);
+    Task AdicionarOcorrenciaAsync(int pedidoId, AdicionarOcorrenciaDTO ocorrencia);
+    Task<bool> ExcluirOcorrenciaAsync(int pedidoId, int ocorrenciaId);
     PedidoDTO MapearParaDTO(Pedido pedido);
     Task<List<PedidoDTO>> GetAllPedidosAsync();
     Task<PedidoDTO?> GetPedidoByIdAsync(int id);

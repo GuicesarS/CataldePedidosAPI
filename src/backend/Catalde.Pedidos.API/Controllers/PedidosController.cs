@@ -1,6 +1,5 @@
 ﻿using Catalde.Pedidos.Application.DTOs;
 using Catalde.Pedidos.Application.Services;
-using Catalde.Pedidos.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,12 +9,9 @@ namespace Catalde.Pedidos.Api.Controllers;
 [ApiController]
 public class PedidosController : ControllerBase
 {
-    private readonly IPedidoRepository _repository;
     private readonly IPedidoService _pedidoService;
-
-    public PedidosController(IPedidoRepository repository, IPedidoService pedidoService)
+    public PedidosController(IPedidoService pedidoService)
     {
-        _repository = repository;  
         _pedidoService = pedidoService;
     }
 
@@ -24,25 +20,22 @@ public class PedidosController : ControllerBase
     [ProducesResponseType(typeof(List<PedidoDTO>), StatusCodes.Status200OK)]
     public async Task<ActionResult<List<PedidoDTO>>> GetAll()
     {
-        var pedidos = await _repository.GetAllAsync();
-
-        var pedidosDTO = pedidos.Select(_pedidoService.MapearParaDTO).ToList();
-
-        return Ok (pedidosDTO);
+        var pedidos = await _pedidoService.GetAllPedidosAsync();
+        return Ok (pedidos);
     }
 
     [Authorize]
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(PedidoDTO), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<List<PedidoDTO>>> GetById(int id)
+    public async Task<ActionResult<PedidoDTO>> GetById(int id)
     {
-        var pedido = await _repository.GetByIdAsync(id);
+        var pedido = await _pedidoService.GetPedidoByIdAsync(id);
 
         if (pedido is null)
             return NotFound($"Pedido {id} não encontrado.");
 
-        return Ok(_pedidoService.MapearParaDTO(pedido));
+        return Ok(pedido);
     }
 
     [Authorize]
@@ -51,9 +44,7 @@ public class PedidosController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<PedidoDTO>> CriarPedido([FromBody] CriarPedidoDTO dto)
     {
-        var pedido =  _pedidoService.CriarPedido(dto);
-
-        await _repository.CreateAsync(pedido);
+        var pedido = await _pedidoService.CriarPedidoAsync(dto);
 
         return CreatedAtAction(nameof(GetById), new { id = pedido.IdPedido}, _pedidoService.MapearParaDTO(pedido));
 
@@ -65,15 +56,20 @@ public class PedidosController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> AdicionarOcorrencia(int id, [FromBody] AdicionarOcorrenciaDTO dto)
     {
-        var pedido = await _repository.GetByIdAsync(id);
+        try
+        {
+            await _pedidoService.AdicionarOcorrenciaAsync(id, dto);
+            return NoContent();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+        catch (ArgumentNullException ex)
+        {
+            return BadRequest(ex.Message);
+        }
 
-        if (pedido is null)
-            return NotFound($"Pedido {id} não encontrado.");
-
-        _pedidoService.AdicionarOcorrencia(pedido, dto);
-        await _repository.UpdateAsync(pedido);
-
-        return NoContent();
     }
 
     [Authorize]
@@ -83,27 +79,23 @@ public class PedidosController : ControllerBase
 
     public async Task<ActionResult> ExcluirOcorrencia(int pedidoId, int ocorrenciaId)
     {
-        var pedido = await _repository.GetByIdAsync(pedidoId);
-
-        if (pedido is null)
-            return NotFound($"Pedido {pedidoId} não encontrado.");
-
-        var ocorrencia = pedido.Ocorrencias.Find(o => o.IdOcorrencia == ocorrenciaId);
-
-        if (ocorrencia is null)
-            return NotFound($"Ocorrência {ocorrenciaId} não encontrada para o pedido {pedidoId}.");
-
         try
         {
-            pedido.ExcluirOcorrencia(ocorrencia);
-            await _repository.UpdateAsync(pedido);
+            var sucesso = await _pedidoService.ExcluirOcorrenciaAsync(pedidoId, ocorrenciaId);
 
+            if (!sucesso)
+                return NotFound($"Ocorrência {ocorrenciaId} não encontrada para o pedido {pedidoId}.");
+
+            return NoContent();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
         }
         catch (Exception ex)
         {
             return BadRequest(ex.Message);
         }
-
-        return NoContent();
     }
+
 }

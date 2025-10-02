@@ -6,7 +6,7 @@ namespace Catalde.Pedidos.UnitTests.Application.Validators;
 
 public class CriarPedidoDTOValidatorTests
 {
-    private readonly CriarPeditoDTOValidator _validator = new();
+    private readonly CriarPedidoDTOValidator _validator = new();
 
     [Fact]
     public void Criar_NumeroPedido_Valido()

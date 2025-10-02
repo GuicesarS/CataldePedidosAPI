@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace Catalde.Pedidos.Application.Validators;
 
-public class CriarPeditoDTOValidator : AbstractValidator<CriarPedidoDTO>
+public class CriarPedidoDTOValidator : AbstractValidator<CriarPedidoDTO>
 {
-    public CriarPeditoDTOValidator()
+    public CriarPedidoDTOValidator()
     {
         RuleFor(x => x.NumeroPedido)
             .GreaterThan(0)

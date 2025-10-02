@@ -1,17 +1,16 @@
 using Catalde.Pedidos.Api.Midldleware;
 using Catalde.Pedidos.Application.Services;
 using Catalde.Pedidos.Infrastructure.Context;
-using Catalde.Pedidos.Infrastructure.Repositories;
+using Catalde.Pedidos.Infrastructure.Repositories.Implementations;
+using Catalde.Pedidos.Infrastructure.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration)
@@ -23,26 +22,28 @@ builder.Host.UseSerilog();
 
 builder.Services.AddSwaggerGen(options =>
 {
-    var securityScheme = new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "Catalde Pedidos API", Version = "v1" });
+
+    var securityScheme = new OpenApiSecurityScheme
     {
         Name = "Authorization",
-        Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
-        Scheme = "bearer",
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
         BearerFormat = "JWT",
-        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-        Description = "Insira o token JWT assim: Bearer {seu token}"
+        In = ParameterLocation.Header,
+        Description = "Insira o token JWT: {seu token} (SEM a palavra Bearer)"
     };
 
     options.AddSecurityDefinition("Bearer", securityScheme);
 
-    options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
-            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            new OpenApiSecurityScheme
             {
-                Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                Reference = new OpenApiReference
                 {
-                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                    Type = ReferenceType.SecurityScheme,
                     Id = "Bearer"
                 }
             },
@@ -55,6 +56,7 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddScoped<IPedidoService, PedidoService>();
 builder.Services.AddScoped<IPedidoRepository, PedidoRepository>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddDbContext<PedidoDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -64,20 +66,21 @@ builder.Services.AddAuthentication(options =>
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
-   .AddJwtBearer(options =>
-   {
-       var key = Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!);
-       options.TokenValidationParameters = new TokenValidationParameters
-       {
-           ValidateIssuer = true,
-           ValidateAudience = true,
-           ValidateLifetime = true,
-           ValidateIssuerSigningKey = true,
-           ValidIssuer = builder.Configuration["Jwt:Issuer"],
-           ValidAudience = builder.Configuration["Jwt:Audience"],
-           IssuerSigningKey = new SymmetricSecurityKey(key)
-       };
-   });
+.AddJwtBearer(options =>
+{
+    var key = Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!);
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+        ClockSkew = TimeSpan.Zero
+    };
+});
 
 builder.Services.AddAuthorization();
 
@@ -85,7 +88,6 @@ var app = builder.Build();
 
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -94,13 +96,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
-
-Log.CloseAndFlush();
 
 public partial class Program { }
