@@ -188,7 +188,7 @@ dotnet test
 1. **Clone o repositório**
 
 ```bash
-git clone https://github.com/seu-usuario/CataldePedidosAPI.git
+git clone https://github.com/GuicesarS/CataldePedidosAPI
 cd CataldePedidosAPI
 ```
 
@@ -270,3 +270,4 @@ CataldePedidosAPI/
 ✅ Projeto finalizado e pronto para avaliação técnica.
 
 ---
+
