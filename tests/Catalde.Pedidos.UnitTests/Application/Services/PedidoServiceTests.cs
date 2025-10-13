@@ -2,6 +2,7 @@
 using Catalde.Pedidos.Application.Services;
 using Catalde.Pedidos.Domain.Entities;
 using Catalde.Pedidos.Domain.Enums;
+using Catalde.Pedidos.Domain.Exceptions;
 using Catalde.Pedidos.Domain.ValueObjects;
 using Catalde.Pedidos.Infrastructure.Repositories.Interfaces;
 using FluentAssertions;
@@ -68,7 +69,7 @@ public class PedidoServiceTests
 
         Func<Task> act = async () => await _service.AdicionarOcorrenciaAsync(1, dto);
 
-        await act.Should().ThrowAsync<KeyNotFoundException>();
+        await act.Should().ThrowAsync<PedidoNotFoundException>();
     }
 
     [Fact]

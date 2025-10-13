@@ -1,6 +1,7 @@
 ﻿using Catalde.Pedidos.Application.DTOs;
 using Catalde.Pedidos.Domain.Entities;
 using Catalde.Pedidos.Domain.Enums;
+using Catalde.Pedidos.Domain.Exceptions;
 using Catalde.Pedidos.Domain.ValueObjects;
 using Catalde.Pedidos.Infrastructure.Repositories.Interfaces;
 using System.Runtime.CompilerServices;
@@ -32,7 +33,7 @@ public class PedidoService : IPedidoService
 
         var pedido = await _unitOfWork.Pedidos.GetByIdAsync(pedidoId);
         if (pedido is null)
-            throw new KeyNotFoundException($"Pedido {pedidoId} não encontrado.");
+            throw new PedidoNotFoundException(pedidoId);
 
         var ocorrencia = new Ocorrencia((ETipoOcorrencia)dto.TipoOcorrencia, false);
         pedido.AdicionarOcorrencia(ocorrencia); 
@@ -45,11 +46,11 @@ public class PedidoService : IPedidoService
     {
         var pedido = await _unitOfWork.Pedidos.GetByIdAsync(pedidoId);
         if (pedido is null)
-            throw new KeyNotFoundException($"Pedido {pedidoId} não encontrado.");
+            throw new PedidoNotFoundException(pedidoId);
 
         var ocorrencia = pedido.Ocorrencias.FirstOrDefault(o => o.IdOcorrencia == ocorrenciaId);
         if (ocorrencia is null)
-            return false;
+            throw new OcorrenciaNotFoundException(pedidoId, ocorrenciaId);
 
         pedido.ExcluirOcorrencia(ocorrencia);
 
@@ -75,7 +76,10 @@ public class PedidoService : IPedidoService
     {
         var pedido = await _unitOfWork.Pedidos.GetByIdAsync(id);
 
-        return pedido is null ? null : PedidoDTO.FromEntity(pedido);
+        if (pedido is null)
+            throw new PedidoNotFoundException(id);
+
+        return PedidoDTO.FromEntity(pedido);
     }
     private void EnsureNotNull<T>(T obj, [CallerArgumentExpression("obj")] string parametro = null)
     {

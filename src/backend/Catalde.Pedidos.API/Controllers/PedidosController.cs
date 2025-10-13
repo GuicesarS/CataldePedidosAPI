@@ -31,10 +31,6 @@ public class PedidosController : ControllerBase
     public async Task<ActionResult<PedidoDTO>> GetById(int id)
     {
         var pedido = await _pedidoService.GetPedidoByIdAsync(id);
-
-        if (pedido is null)
-            return NotFound($"Pedido {id} não encontrado.");
-
         return Ok(pedido);
     }
 
@@ -55,21 +51,9 @@ public class PedidosController : ControllerBase
     [ProducesResponseType(typeof(PedidoDTO), StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> AdicionarOcorrencia(int id, [FromBody] AdicionarOcorrenciaDTO dto)
-    {
-        try
-        {
+    {      
             await _pedidoService.AdicionarOcorrenciaAsync(id, dto);
             return NoContent();
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return NotFound(ex.Message);
-        }
-        catch (ArgumentNullException ex)
-        {
-            return BadRequest(ex.Message);
-        }
-
     }
 
     [Authorize]
@@ -79,23 +63,7 @@ public class PedidosController : ControllerBase
 
     public async Task<ActionResult> ExcluirOcorrencia(int pedidoId, int ocorrenciaId)
     {
-        try
-        {
-            var sucesso = await _pedidoService.ExcluirOcorrenciaAsync(pedidoId, ocorrenciaId);
-
-            if (!sucesso)
-                return NotFound($"Ocorrência {ocorrenciaId} não encontrada para o pedido {pedidoId}.");
-
-            return NoContent();
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return NotFound(ex.Message);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        await _pedidoService.ExcluirOcorrenciaAsync(pedidoId, ocorrenciaId);
+        return NoContent();
     }
-
 }

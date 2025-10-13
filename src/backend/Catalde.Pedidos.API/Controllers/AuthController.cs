@@ -22,7 +22,7 @@ public class AuthController : ControllerBase
     [AllowAnonymous]
     public IActionResult Login([FromBody] LoginRequest request)
     {
-        // Aqui seria validação de usuário real no banco
+  
         if (request.username != "admin" || request.password != "123456")
             return Unauthorized("Usuário ou senha inválidos");
 
